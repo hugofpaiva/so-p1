@@ -14,43 +14,22 @@ function read_file(){
 }
 read_file
 
-#Tratamento de opções para a ordem de visualização. Vou buscar as opções ao 2º argumento 
-function order_sessions(){
-    case $2 in
-
-    -r)
-        statements ;;
-    -n )
-        statements ;;
-    -t )
-        statements ;;
-    -a )
-        statements ;;
-    -i )
-        statements ;;
-
-esac
-}
-
-#Tratamento de opções. "$1" corresponde ao 1º Argumentos
-case $1 in
 # -z: vai testar se o "$1" é uma string nula ou não. Se for uma string nula, é executado.
 #    [ -z "$1" ] ) 
-      )
-      if [![ -z "$2" ]] # Se o 2º argumento não for uma string nula
-      then
-      fi
-        statements ;;
-    -g )
-        statements ;;
-    -u )
-        statements ;;
-    -s )
-        statements ;;
-    -e )
-        statements ;;
-    -f )
-        #Vou buscar o path para o ficheiro que quero ler ao 2º argumento - "$2"
-        path = $2
-        read_file() ;;
-esac
+
+# As opções são passadas todas a seguir ao getopts. Se tiver ":" quer dizer que aceita argumentos. O "${OPTARG}" são os argumentos
+
+while getopts g:u:s:e:f:rntai option; do
+     case "${option}" in
+        g) echo "A opção A foi ativada." ;;
+        u) argumento_b="${OPTARG}" ;;
+        s) recebi_c=1 ;;
+        e) recebi_d=1 ;;
+        f) recebi_e=1 ;;
+        r) ;;
+        n) ;;
+        t) ;;
+        a) ;;
+        i) ;;
+     esac
+  done
