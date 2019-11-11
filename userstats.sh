@@ -12,7 +12,7 @@ function read_file(){
     file_array+=("$line")
     done < "$path"  #Vou buscar a variável path, logo uso $
 }
-read_file()
+read_file
 
 #Tratamento de opções para a ordem de visualização. Vou buscar as opções ao 2º argumento 
 function order_sessions(){
