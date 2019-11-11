@@ -7,7 +7,7 @@ file_array=() #Array onde vai ser guardado o ficheiro
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
 # IFS=:Opção antes do comando read que previne os espaços de serem cortados
-read_file(){
+function read_file(){
     while IFS= read -r line; do 
     file_array+=("$line")
     done < "$path"  #Vou buscar a variável path, logo uso $
@@ -15,7 +15,7 @@ read_file(){
 read_file()
 
 #Tratamento de opções para a ordem de visualização. Vou buscar as opções ao 2º argumento 
-order(){
+function order_sessions(){
     case $2 in
 
     -r)
