@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path = "/var/log/wtmp"
+path="/var/log/wtmp"
 
 file_array=() #Array onde vai ser guardado o ficheiro
 
