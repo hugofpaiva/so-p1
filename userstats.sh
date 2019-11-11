@@ -12,7 +12,7 @@ function read_file(){
     file_array+=("$line")
     done < "$path"  #Vou buscar a variável path, logo uso $
 }
-read_file
+#read_file
 
 # Usage - Como se usa o script
 function usage(){
@@ -33,11 +33,15 @@ else
    while getopts g:u:s:e:f:rntai option; do # As opções são passadas todas a seguir ao getopts. Se tiver ":" quer dizer que aceita argumentos. O "${OPTARG}" são os argumentos
       case "${option}" in
          g) echo "A opção g foi ativada." 
-            echo "$file_array";;
+            #echo "$file_array"
+            #eval "last"
+            $(last > last.txt);;
          u) argumento_b="${OPTARG}" ;;
          s) recebi_c=1 ;;
          e) recebi_d=1 ;;
-         f) echo "O script vai ler do ficheiro ${OPTARG}";;
+         f) echo "O script vai ler do ficheiro ${OPTARG}"
+         $(last -f ${OPTARG} > last.txt)   #corre o last com um novo ficheiro de texto
+         ;;
          r) ;;
          n) ;;
          t) ;;
