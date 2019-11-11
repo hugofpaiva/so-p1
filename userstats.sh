@@ -30,8 +30,8 @@ function order_sessions(){
         statements ;;
 
 esac
-
 }
+
 #Tratamento de opções. "$1" corresponde ao 1º Argumentos
 case $1 in
 # -z: vai testar se o "$1" é uma string nula ou não. Se for uma string nula, é executado.
