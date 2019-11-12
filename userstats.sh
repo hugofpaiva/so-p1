@@ -10,7 +10,7 @@ users=() #Array onde vão ser guardados os utilizadores
 group=() #Array onde vão ser guardados os grupos de utilizadores
 session=() #Array onde vai ser guardado o tempo total de ligação (minutos)
 init_hour=() #Array onde vai ser guardada a hora de início da sessão
-final_hour=() init_hour=() #Array onde vai ser guardada a hora de fim da sessão
+final_hour=() #Array onde vai ser guardada a hora de fim da sessão
 
 
 
@@ -25,6 +25,9 @@ function read_file() {
    #Estou a colocar os elementos do file_array no array. Faço o split com espaço
    IFS=' ' read -r -a array <<< "$file_array"
    echo "${array[0]}"
+   #readarray a < $path
+   echo "${a[60]}"
+
 }
 #read_file
 
