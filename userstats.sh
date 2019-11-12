@@ -21,7 +21,7 @@ function read_file() {
    while IFS= read -r line; do
       file_array+=("$line")
       #IFS=' ' read -r -a array <<< "$line"
-   done <"$path" 
+   done <"$path"
    #Estou a colocar os elementos do file_array no array. Faço o split com espaço
    IFS=' ' read -r -a array <<< "$file_array"
    echo "${array[0]}"
