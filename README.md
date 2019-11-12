@@ -4,15 +4,15 @@
 
 O objectivo do trabalho é o desenvolvimento de scripts em bash que permitem recolher algumas estatísticas sobre o modo como os utilizadores estão a usar o sistema computacional. Estas ferramentas permitem visualizar o número de sessões e o tempo total de ligação para uma selecção de utilizadores e um determinado período de tempo. Permitem também comparar os dados obtidos em em períodos distintos.
 
-##  Getting Started
-These instructions will help to compile and run developed programs on your local machine.
+##  Preparação
+Estas instruções vão ajudar a executar os programas desenvolvidos.
 
-### Prerequisites
-It is needed Linux and UNIX like operating systems to run the shell script files (.sh).
+### Requisitos
+O trabalho desenvolvido teve unicamente como propósito a implementação em ambientes Linux e sistemas operativos baseados em UNIX de modo a executar scripts em bash.  
 
-## Running
+## Executar
 
-**Options:**
+**Opções:**
 ```
  ./userstats.sh -g [grupo] -u [nome] -s [data1] -p [data2] -r -n -t -a -i
   [grupo] - Grupo de utilizadores
