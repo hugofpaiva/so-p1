@@ -27,6 +27,7 @@ function read_file() {
    echo "${array[0]}"
    #readarray a < $path
    echo "${a[60]}"
+  
 
 }
 #read_file
@@ -41,8 +42,8 @@ function usage() {
    echo "[data2] = Data de início de sessão a partir da qual as sessões não devem ser consideradas"
    echo ""
    echo "Todas estas opções são opcionais, sendo que o script corre sem nenhuma opção."
-   echo ""
-   exit 
+   echo "" 
+   exit
 }
 
 #Tratamento de opções
@@ -64,14 +65,25 @@ else
          #eval "last"
          $(last >last.txt)
          ;;
-      u) argumento_b="${OPTARG}" ;;
-      s) recebi_c=1 ;;
-      e) recebi_d=1 ;;
+      u)
+      echo ${2:0:1}
+      if [ ${2:0:1} == "-" ] ; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+         usage
+      else
+
+      echo "ok" 
+      argumento_b="${OPTARG}"
+      fi ;;
+      s) recebi_c=1 
+      echo "s";;
+      e) echo "e"
+      recebi_d=1 ;;
       f)
          echo "O script vai ler do ficheiro ${OPTARG}"
          $(last -f ${OPTARG} >last.txt) #corre o last com um novo ficheiro de texto
          ;;
-      r) ;;
+      r) 
+      echo "oko";;
       n) ;;
       t) ;;
       a) ;;
@@ -83,9 +95,14 @@ else
    done
 
    if [ $OPTIND -eq 1 ]; then #Este if corre se não houve nenhuma opção mas forem passado argumentos
-      usage
+      echo " "
       echo "Nenhuma opção mas foram passado argumentos"
+      echo " "
+      usage
    fi
+
+   shift $((OPTIND-1))
+
 
 fi
 
