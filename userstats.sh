@@ -1,8 +1,18 @@
 #!/bin/bash
 
-path="/var/log/wtmp"
+#path="/var/log/wtmp"
+path="last.txt"
 
-file_array=() #Array onde vai ser guardado o ficheiro
+#Arrays para a leitura de ficheiro:
+
+file_array=() #Array onde vai ser guardado o conteúdo do ficheiro
+users=() #Array onde vão ser guardados os utilizadores
+group=() #Array onde vão ser guardados os grupos de utilizadores
+session=() #Array onde vai ser guardado o tempo total de ligação (minutos)
+init_hour=() #Array onde vai ser guardada a hora de início da sessão
+final_hour=() init_hour=() #Array onde vai ser guardada a hora de fim da sessão
+
+
 
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
@@ -10,7 +20,11 @@ file_array=() #Array onde vai ser guardado o ficheiro
 function read_file() {
    while IFS= read -r line; do
       file_array+=("$line")
-   done <"$path" #Vou buscar a variável path, logo uso $
+      #IFS=' ' read -r -a array <<< "$line"
+   done <"$path" 
+   #Estou a colocar os elementos do file_array no array. Faço o split com espaço
+   IFS=' ' read -r -a array <<< "$file_array"
+   echo "${array[0]}"
 }
 #read_file
 
@@ -23,9 +37,9 @@ function usage() {
    echo "[data1] = Data de início da sessão a partir da qual as sessões devem ser consideradas"
    echo "[data2] = Data de início de sessão a partir da qual as sessões não devem ser consideradas"
    echo ""
-   echo "Todas estas opções são opcionais, sendo que o script corre sem nenhuma opção"
+   echo "Todas estas opções são opcionais, sendo que o script corre sem nenhuma opção."
    echo ""
-   exit 1
+   exit 
 }
 
 #Tratamento de opções
@@ -33,6 +47,9 @@ function usage() {
 #    [ -z "$1" ] )
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
    echo "Nenhum argumento ou opção"
+   $(last >last.txt)
+   read_file
+   echo $file_array
    exit
 else
 
@@ -70,6 +87,5 @@ else
 fi
 
 #shift $((OPTIND-1)) Este shitf vai fazer desaparecer dos argumentos $1, $2, ... as opções e argumentos passado ao getopts
-
 #Logo, ao fazer echo "$1" vai-me dar os outros argumentos não utilizados em getopts
 #echo "$1"
