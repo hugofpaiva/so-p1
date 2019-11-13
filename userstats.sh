@@ -7,6 +7,7 @@ path="last.txt"
 
 file_array=() #Array onde vai ser guardado o conteúdo do ficheiro
 users=()      #Array onde vão ser guardados os utilizadores
+users_unique=()
 group=()      #Array onde vão ser guardados os grupos de utilizadores
 session=()    #Array onde vai ser guardado o tempo total de ligação (minutos)
 init_hour=()  #Array onde vai ser guardada a hora de início da sessão
