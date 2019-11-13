@@ -6,13 +6,11 @@ path="last.txt"
 #Arrays para a leitura de ficheiro:
 
 file_array=() #Array onde vai ser guardado o conteúdo do ficheiro
-users=() #Array onde vão ser guardados os utilizadores
-group=() #Array onde vão ser guardados os grupos de utilizadores
-session=() #Array onde vai ser guardado o tempo total de ligação (minutos)
-init_hour=() #Array onde vai ser guardada a hora de início da sessão
+users=()      #Array onde vão ser guardados os utilizadores
+group=()      #Array onde vão ser guardados os grupos de utilizadores
+session=()    #Array onde vai ser guardado o tempo total de ligação (minutos)
+init_hour=()  #Array onde vai ser guardada a hora de início da sessão
 final_hour=() #Array onde vai ser guardada a hora de fim da sessão
-
-
 
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
@@ -20,16 +18,16 @@ final_hour=() #Array onde vai ser guardada a hora de fim da sessão
 function read_file() {
    while IFS= read -r line; do
       file_array+=("$line")
-      #IFS=' ' read -r -a array <<< "$line"
+      #IFS=' ' read -r -a array <<< "$line" #outra maneira de ler
    done <"$path"
    #Estou a colocar os elementos do file_array no array. Faço o split com espaço
-   IFS=' ' read -r -a array <<< "$file_array"
-   echo "${array[0]}"
+   #IFS=' ' read -r -a array <<<"$file_array" #outra maniera de ler
+   #echo "${array[0]}"
    #readarray a < $path
-   echo "${a[60]}"
-  
+   #echo "${a[60]}"
 
 }
+
 #read_file
 
 # Usage - Como se usa o script
@@ -42,7 +40,7 @@ function usage() {
    echo "[data2] = Data de início de sessão a partir da qual as sessões não devem ser consideradas"
    echo ""
    echo "Todas estas opções são opcionais, sendo que o script corre sem nenhuma opção."
-   echo "" 
+   echo ""
    exit
 }
 
@@ -51,39 +49,57 @@ function usage() {
 #    [ -z "$1" ] )
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
    echo "Nenhum argumento ou opção"
-   $(last >last.txt)
-   read_file
-   echo $file_array
+   $(last)
    exit
 else
 
    while getopts g:u:s:e:f:rntai option; do # As opções são passadas todas a seguir ao getopts. Se tiver ":" quer dizer que aceita argumentos. O "${OPTARG}" são os argumentos
       case "${option}" in
       g)
-         echo "A opção g foi ativada."
-         #echo "$file_array"
-         #eval "last"
-         $(last >last.txt)
+         if [ ${2:0:1} == "-" ]; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+            usage
+         else
+            echo "A opção g foi ativada."
+            $(last)
+         fi
          ;;
       u)
-      echo ${2:0:1}
-      if [ ${2:0:1} == "-" ] ; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
-         usage
-      else
+         echo ${2:0:1}
+         if [ ${2:0:1} == "-" ]; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+            usage
+         else
 
-      echo "ok" 
-      argumento_b="${OPTARG}"
-      fi ;;
-      s) recebi_c=1 
-      echo "s";;
-      e) echo "e"
-      recebi_d=1 ;;
-      f)
-         echo "O script vai ler do ficheiro ${OPTARG}"
-         $(last -f ${OPTARG} >last.txt) #corre o last com um novo ficheiro de texto
+            echo "ok"
+            argumento_b="${OPTARG}"
+         fi
          ;;
-      r) 
-      echo "oko";;
+      s)
+         if [ ${2:0:1} == "-" ]; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+            usage
+         else
+            recebi_c=1
+            echo "s"
+         fi
+         ;;
+      e)
+         if [ ${2:0:1} == "-" ]; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+            usage
+         else
+            echo "e"
+            recebi_d=1
+         fi
+         ;;
+      f)
+         if [ ${2:0:1} == "-" ]; then #Verifica se o 1º caracter do 2º argumento é um "-", ou seja, uma opção. Se isto não acontecer, quer dizer que é um argumento e a função corre normal.
+            usage
+         else
+            echo "O script vai ler do ficheiro ${OPTARG}"
+            $(last -f ${OPTARG}) #corre o last com um novo ficheiro de texto
+         fi
+         ;;
+      r)
+         echo "oko"
+         ;;
       n) ;;
       t) ;;
       a) ;;
@@ -101,8 +117,7 @@ else
       usage
    fi
 
-   shift $((OPTIND-1))
-
+   shift $((OPTIND - 1))
 
 fi
 
