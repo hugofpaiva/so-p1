@@ -49,7 +49,12 @@ function usage() {
 #    [ -z "$1" ] )
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
    echo "Nenhum argumento ou opção"
-   $(last)
+   users+=($( last | awk '{print $1}' ))
+   for i in "${users[@]}"
+   do
+   	:
+   	echo $i
+   done
    exit
 else
 
@@ -61,6 +66,7 @@ else
          else
             echo "A opção g foi ativada."
             $(last)
+
          fi
          ;;
       u)
