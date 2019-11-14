@@ -51,7 +51,8 @@ function usage() {
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
    echo "Nenhum argumento ou opção"
    users+=($( last | awk '{print $1}' )) # o | manda o comando last para o awk e é guarda a info no array users
-   users_unique+=($(echo "${users[@]}" | tr ' ' '\n' |sort -u | tr '\n' ' ')) #array apenas com unique users #uniq -c
+   users_unique+=($(echo "${users[@]}" | tr ' ' '\n' |sort -u)) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
+     #a sequence of lines that compare equal
    # print da info para testes		
    for i in "${users_unique[@]}"
    do
