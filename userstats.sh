@@ -10,8 +10,9 @@ users=()      #Array onde vão ser guardados os utilizadores
 users_unique=()
 group=()      #Array onde vão ser guardados os grupos de utilizadores
 session=()    #Array onde vai ser guardado o tempo total de ligação (minutos)
-init_hour=()  #Array onde vai ser guardada a hora de início da sessão
+init_data=()  #Array onde vai ser guardada a data de início da sessão
 final_hour=() #Array onde vai ser guardada a hora de fim da sessão
+num_users=()
 
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
@@ -45,21 +46,32 @@ function usage() {
    exit
 }
 
+# Tratamento de dados
+
+init_data+=$(last | awk '{print $3 "\t" $4 "\t" $5 "\t" $6}')
+users+=($(last | awk '{print $1}'))                           # o | manda o comando last para o awk e é guarda a info no array users
+users_unique+=($(echo "${users[@]}" | tr ' ' '\n' | sort -u)) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
+#a sequence of lines that compare equal
+num_users+=$(IFS=$'\n'; sort <<< "${users[*]}" | uniq -c)
+for i in "${num_users[@]}"; do
+               :
+               echo "$i"
+            done
+for i in "${user_uni[@]}"; do
+               :
+               echo "$i"
+            done
+# print da info para testes
+
+
 #Tratamento de opções
 # -z: vai testar se o "$1" é uma string nula ou não. Se for uma string nula, é executado.
 #    [ -z "$1" ] )
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
    echo "Nenhum argumento ou opção"
-   users+=($( last | awk '{print $1}' )) # o | manda o comando last para o awk e é guarda a info no array users
-   users_unique+=($(echo "${users[@]}" | tr ' ' '\n' |sort -u)) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
-     #a sequence of lines that compare equal
-   # print da info para testes		
-   for i in "${users_unique[@]}"
-   do
-   	:
-   	echo $i
-   done
+   
    exit
+
 else
 
    while getopts g:u:s:e:f:rntai option; do # As opções são passadas todas a seguir ao getopts. Se tiver ":" quer dizer que aceita argumentos. O "${OPTARG}" são os argumentos
@@ -104,7 +116,16 @@ else
             usage
          else
             echo "O script vai ler do ficheiro ${OPTARG}"
-            $(last -f ${OPTARG}) #corre o last com um novo ficheiro de texto
+            init_data+=$(last -f ${OPTARG} | awk '{print $3 "\t" $4 "\t" $5 "\t" $6}')
+            users+=($(last -f ${OPTARG} | awk '{print $1}'))              # o | manda o comando last para o awk e é guarda a info no array users
+            users_unique+=($(echo "${users[@]}" | tr ' ' '\n' | sort -u)) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
+            #a sequence of lines that compare equal
+            # print da info para testes
+            for i in "${init_data[@]}"; do
+               :
+               echo "$i"
+            done
+            exit
          fi
          ;;
       r)
