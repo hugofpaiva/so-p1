@@ -57,7 +57,7 @@ users+=$(last | awk '{print $1}')                      # o | manda o comando las
 users_unique+=$(echo "${users[@]}" | tr ' ' '\n' | sort -u) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
 #a sequence of lines that compare equal
 num_users+=$(IFS=$'\n'; sort <<< "${users[*]}" | uniq -c)
-echo "$num_users"
+#$(echo "$num_users" | awk '{for (i=2; i<=NF; i++) print $i}')
 
 
 #Tratamento de opções
