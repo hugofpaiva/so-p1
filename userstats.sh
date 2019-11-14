@@ -12,7 +12,8 @@ group=()      #Array onde vão ser guardados os grupos de utilizadores
 session=()    #Array onde vai ser guardado o tempo total de ligação (minutos)
 init_data=()  #Array onde vai ser guardada a data de início da sessão
 final_hour=() #Array onde vai ser guardada a hora de fim da sessão
-num_users=()
+num_users=()  #Array onde vai ser guardado o número de users únicos
+init_hour=()  #Array onde vai ser guardado a hora de início de sessão
 
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
@@ -49,19 +50,14 @@ function usage() {
 # Tratamento de dados
 
 init_data+=$(last | awk '{print $3 "\t" $4 "\t" $5 "\t" $6}')
-users+=($(last | awk '{print $1}'))                           # o | manda o comando last para o awk e é guarda a info no array users
-users_unique+=($(echo "${users[@]}" | tr ' ' '\n' | sort -u)) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
+init_hour+=$(last | awk '{print $6}')
+final_hour+=$(last | awk '{print $8}')
+session+=$(last | awk '{print $9}')
+users+=$(last | awk '{print $1}')                      # o | manda o comando last para o awk e é guarda a info no array users
+users_unique+=$(echo "${users[@]}" | tr ' ' '\n' | sort -u) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
 #a sequence of lines that compare equal
 num_users+=$(IFS=$'\n'; sort <<< "${users[*]}" | uniq -c)
-for i in "${num_users[@]}"; do
-               :
-               echo "$i"
-            done
-for i in "${user_uni[@]}"; do
-               :
-               echo "$i"
-            done
-# print da info para testes
+echo "$num_users"
 
 
 #Tratamento de opções
