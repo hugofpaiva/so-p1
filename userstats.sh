@@ -8,12 +8,13 @@ path="last.txt"
 file_array=() #Array onde vai ser guardado o conteúdo do ficheiro
 users=()      #Array onde vão ser guardados os utilizadores
 users_unique=()
-group=()      #Array onde vão ser guardados os grupos de utilizadores
-session=()    #Array onde vai ser guardado o tempo total de ligação (minutos)
-init_data=()  #Array onde vai ser guardada a data de início da sessão
-final_hour=() #Array onde vai ser guardada a hora de fim da sessão
-num_users=()  #Array onde vai ser guardado o número de users únicos
-init_hour=()  #Array onde vai ser guardado a hora de início de sessão
+group=()            #Array onde vão ser guardados os grupos de utilizadores
+session=()          #Array onde vai ser guardado o tempo total de ligação
+init_data=()        #Array onde vai ser guardada a data de início da sessão
+final_hour=()       #Array onde vai ser guardada a hora de fim da sessão
+num_users_unique=() #Array onde vai ser guardado o número de users únicos e os users
+init_hour=()        #Array onde vai ser guardado a hora de início de sessão
+min_session=()      #Array onde vai ser guardado o tempo total de ligação (minutos)
 
 # Leitura de ficheiro:
 # -r: opção passada para o comando read que evita o "backslash escape" de ser interpretado
@@ -49,23 +50,43 @@ function usage() {
 
 # Tratamento de dados
 
-init_data+=$(last | awk '{print $3 "\t" $4 "\t" $5 "\t" $6}')
-init_hour+=$(last | awk '{print $6}')
-final_hour+=$(last | awk '{print $8}')
-session+=$(last | awk '{print $9}')
-users+=$(last | awk '{print $1}')                      # o | manda o comando last para o awk e é guarda a info no array users
+init_data+=$(last | awk '!/^wtmp/{print $3 "\t" $4 "\t" $5 "\t" $6}')
+init_hour+=$(last | awk '!/^wtmp/{print $6}')
+final_hour+=$(last | awk '!/^wtmp/{print $8}')
+session+=$(last | awk '!/^wtmp/{print substr($9,2,5)}') #### O !/^wtmp/ ignora a linha que começa por wtmp e por consequência, a linha em branco anterior
+min_session+=$(echo "${session[@]}" | awk '{print (((substr($1,0,2)*60)+substr($1,4,5)))}')
+users+="$(last | awk '!/^wtmp/{print $1}')"                 # o | manda o comando last para o awk e é guarda a info no array users
 users_unique+=$(echo "${users[@]}" | tr ' ' '\n' | sort -u) #array apenas com unique users #uniq -c #space (‘ ‘) is replaced by tab (‘\t’), fazemos isto pq o sort compara linhas #-u:only output the first of
 #a sequence of lines that compare equal
-num_users+=$(IFS=$'\n'; sort <<< "${users[*]}" | uniq -c)
-#$(echo "$num_users" | awk '{for (i=2; i<=NF; i++) print $i}')
-
+num_users_unique+=$(
+   IFS=$'\n'
+   sort <<<"${users[*]}" | uniq -c
+)
+#echo $(echo "${session[*]}" | awk '{print $2 " " $1}')
+echo ${min_session[@]}
+#echo "${session[@]}"
+#echo "${users[@]}"
+###################### TESTES ##############################
+#Ir buscar o count do user do array tem_users que tem a contagem e o nome dos user únicos
+#for each in "${temp_users[@]}"
+#do
+# num_users+=$(echo "$each" | awk '{print $2}')
+#done
+#ou
+#num_users+=$(echo "${temp_users[*]}" | awk '{print $1}')
+#print do num_users
+#echo "${#num_users[*]}"# vai buscar o length do array por causa do "#"
+#echo "${num_users[*]}"
+############################################################
 
 #Tratamento de opções
 # -z: vai testar se o "$1" é uma string nula ou não. Se for uma string nula, é executado.
 #    [ -z "$1" ] )
 if [ -z "$1" ]; then #Este if verifica se é passada algum arguemto ou não. Tem de ter espaços a toda a volta do "[" "]"
-   echo "Nenhum argumento ou opção"
-   
+   #echo "Nenhum argumento ou opção"
+   #Print das opções de acordo com o pedido na opção:
+   printf "%s %s \n" "$(echo "${num_users_unique[*]}" | awk '{print $2 " " $1}')" #Vai trocar a order do num_users_unique para fazer display corretamente
+
    exit
 
 else
