@@ -12,7 +12,7 @@ options_control=(n t a i) #Array com as opções que não podem ser repetidas
 
 # Criação dos inputs ####FALTA VERIFICAÇÃO E AINDA NÃO PERMITE OPÇÕES - estava a morrer de sono
 input1=$1
-inout2=$2
+input2=$2
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -56,11 +56,11 @@ function args() {
 
 function getUsers() {
     users1=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
-    users2=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+    users2=$(cat $input2 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
 }
 
 
-function getUserInfo() {
+function getUserInfo() { #Amanhã acabo
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
 
     for user1 in ${users1[@]}; do
@@ -70,18 +70,14 @@ function getUserInfo() {
         min1=$(cat $input1 | awk '{print $2}')
 
         for user2 in ${users2[@]}; do
-            if [[$user2==$user1]];then
+            if [ "$user2" = "$user1" ];then
                 sessions=sessions1-$(cat $input2 | awk '{print $1}')
                 total=total1-$(cat $input2 | awk '{print $2}')
                 max=max1-$(cat $input2 | awk '{print $2}')
                 min=min1-$(cat $input2 | awk '{print $2}')
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
             else
-                sessions=$(cat $input2 | awk '{print $1}')
-                total=$(cat $input2 | awk '{print $2}')
-                max=$(cat $input2 | awk '{print $2}')
-                min=$(cat $input2 | awk '{print $2}')
-                userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
+ echo "ok"
             fi
  
         done
