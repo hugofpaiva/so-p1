@@ -3,8 +3,9 @@
 # Arrays para guardar users e a sua informaçao
 users=()
 file_array=()
-declare -A argOpt=()
+declare -A argOpt=() #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()
+options_control=(n t a i)
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -22,63 +23,72 @@ function usage() {
 
 # Tratamento de opções
 function args(){
-   while getopts g:u:s:e:f:rntai option; do
-      case "${option}" in
-         g)
-            if [ ${2:0:1} == "-" ]; then 
-               usage
-            else
-               echo "Selecting users that belong to the ${OPTARG} group"
-            fi
-            ;;
-         u)
-            if [ ${2:0:1} == "-" ]; then 
-               usage
-            else
-               echo "Selecting users that match ${OPTARG}"
-            fi
-            ;;
-         s)
-            if [ ${2:0:1} == "-" ]; then 
-               usage
-            else
-               echo "Opção s"
-            fi
-            ;;
-         e)   
-            if [ ${2:0:1} == "-" ]; then 
-               usage
-            else
-               echo "Opção e"
-            fi
-            ;;
-         f)
-            if [ ${2:0:1} == "-" ]; then 
-               usage
-            else
-               echo "O script vai ler do ficheiro ${OPTARG}"
-            fi
-            ;;
-         r|n|t|a|i) ;;
-         *)
-            usage
-            ;;
-         esac
 
-      if [[ -z "$OPTARG" ]]; then
-         argOpt[$option]="none"
-      else
-         argOpt[$option]=${OPTARG}
-      fi
+      while getopts g:u:s:e:f:rntai option; do
+         case "${option}" in
+            g)
+               if [ ${2:0:1} == "-" ]; then 
+                  usage
+               else
+                  echo "Selecting users that belong to the ${OPTARG} group"
+               fi
+               ;;
+            u)
+               if [ ${2:0:1} == "-" ]; then 
+                  usage
+               else
+                  echo "Selecting users that match ${OPTARG}"
+               fi
+               ;;
+            s)
+               if [ ${2:0:1} == "-" ]; then 
+                  usage
+               else
+                  echo "Opção s"
+               fi
+               ;;
+            e)   
+               if [ ${2:0:1} == "-" ]; then 
+                  usage
+               else
+                  echo "Opção e"
+               fi
+               ;;
+            f)
+               if [ ${2:0:1} == "-" ]; then 
+                  usage
+               else
+                  echo "O script vai ler do ficheiro ${OPTARG}"
+               fi
+               ;;
+            r|n|t|a|i) ;;
+            *)
+               usage
+               ;;
+            esac
 
-   done
-   shift $((OPTIND - 1))
+            for i in "${options_control[@]}"#Vou percorrer o array das opções que não podem ser repetidas
+                  do
+                  if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
+                     usage
+                  fi
+                  done
+         if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
+            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
+         else
+            argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
+            fi
+         
 
+      done
+      shift $((OPTIND - 1))
+   
 }
 
-# Tratamento de dados
+# Tratamento e leitura de dados
+
 function getUsers(){
-   if [[ -v argOpt[f] ]]; then
+   if [[ -v argOpt[f] ]]; then #-v em declarative arrays vai verificar se o elemento a seguir está no array
       users=$(last -f "${argOpt['f']}" | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed "/${argOpt['f']}/d" )   
    else
          # Filtrar users
