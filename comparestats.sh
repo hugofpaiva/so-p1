@@ -57,7 +57,6 @@ function getUsers() {
     users2=$(cat $input2 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
 }
 
-
 function getUserInfo() { #Amanhã acabo
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
     for user1 in ${users1[@]}; do
@@ -66,35 +65,34 @@ function getUserInfo() { #Amanhã acabo
         total1=$(cat $input1 | grep $user1 | awk '{print $3}')
         max1=$(cat $input1 | grep $user1 | awk '{print $4}')
         min1=$(cat $input1 | grep $user1 | awk '{print $5}')
-if [[ " ${users2[@]} " =~ " ${user1} " ]]; then
-    # whatever you want to do when arr doesn't contain value
-    userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
-    continue
-fi
-
-         for user2 in ${users2[@]}; do
-         sessions2=$(cat $input2 | grep $user2 | awk '{print $2}')
-                total2=$(cat $input2 | grep $user2 | awk '{print $3}')
-                max2=$(cat $input2 | grep $user2 | awk '{print $4}')
-                min2=$(cat $input2 | grep $user2 | awk '{print $5}')
-            if [[ " ${users1[@]} " =~ " ${user2} " ]]; then
+        if [[ " ${users2[@]} " =~ " ${user1} " ]]; then
             # whatever you want to do when arr doesn't contain value
-    userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
-    continue
-fi
-            if [ "$user2" = "$user1" ];then
-                sessions=$(($sessions1-$sessions2))
-                total=$(($total1-$total2))
-                max=$(($max1-$max2))
-                min=$(($min1-$min2))
+            userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
+            continue
+        fi
+
+        for user2 in ${users2[@]}; do
+            sessions2=$(cat $input2 | grep $user2 | awk '{print $2}')
+            total2=$(cat $input2 | grep $user2 | awk '{print $3}')
+            max2=$(cat $input2 | grep $user2 | awk '{print $4}')
+            min2=$(cat $input2 | grep $user2 | awk '{print $5}')
+            if [[ " ${users1[@]} " =~ " ${user2} " ]]; then
+                # whatever you want to do when arr doesn't contain value
+                userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
+                continue
+            fi
+            if [ "$user2" = "$user1" ]; then
+                sessions=$(($sessions1 - $sessions2))
+                total=$(($total1 - $total2))
+                max=$(($max1 - $max2))
+                min=$(($min1 - $min2))
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
                 in_array=1
             fi
- 
+
         done
 
     done
-
 
     printIt
 }
