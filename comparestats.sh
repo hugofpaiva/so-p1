@@ -1,18 +1,16 @@
 #!/bin/bash
 
 # Arrays para guardar users e a sua informaçao
-users=()
+users1=() #Array para os user do input1
+users2=() #Array para os user do input2
 file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
+declare -A userInfo1=()
+declare -A userInfo2=()
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
 
-# Criação dos inputs
-#for i in "$@"; do
- #   if [ ${2:0:1} == "-" ]; then
-  #      echo "ok"
-  #  fi
-#done
+# Criação dos inputs ####FALTA VERIFICAÇÃO E AINDA NÃO PERMITE OPÇÕES - estava a morrer de sono
 input1=$1
 inout2=$2
 
@@ -57,49 +55,41 @@ function args() {
 # Tratamento e leitura de dados
 
 function getUsers() {
-    users=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+    users1=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+    users2=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
 }
 
-function calculateTime() {
-    time=$1
-
-    # Calcular tempo em minutos
-    if ((${#time} >= 7)); then
-        minlogged=$(echo $time | tr '+' ':' | awk -F: '{ print ($1 * 1440) + ($2 * 60) + $3 }')
-    else
-        minlogged=$(echo $time | awk -F: '{ print ($1 * 60) + $2 }')
-    fi
-    # Calcular o total
-    total=$(($total + $minlogged))
-
-    # Calcular máximo e mínimo
-    if ((minlogged < min)); then
-        min=$minlogged
-    fi
-
-    if ((minlogged > max)); then
-        max=$minlogged
-    fi
-}
 
 function getUserInfo() {
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
 
-    for user in ${users[@]}; do
-        echo "$user"
-        sessions=$(cat $input1 |awk '{print $1}')
-        time=$(cat $input1 | grep $user | awk '{print $10}' | sed '/in/d' | sed 's/[)(]//g')
+    for user1 in ${users1[@]}; do
+        sessions1=$(cat $input1 | awk '{print $1}')
+        total1=$(cat $input1 | awk '{print $2}')
+        max1=$(cat $input1 | awk '{print $2}')
+        min1=$(cat $input1 | awk '{print $2}')
 
-        min=3000000
-        max=0
-        total=0
-
-        for t in $time; do
-            calculateTime "$t"
+        for user2 in ${users2[@]}; do
+            if [[$user2==$user1]];then
+                sessions=sessions1-$(cat $input2 | awk '{print $1}')
+                total=total1-$(cat $input2 | awk '{print $2}')
+                max=max1-$(cat $input2 | awk '{print $2}')
+                min=min1-$(cat $input2 | awk '{print $2}')
+                userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
+            else
+                sessions=$(cat $input2 | awk '{print $1}')
+                total=$(cat $input2 | awk '{print $2}')
+                max=$(cat $input2 | awk '{print $2}')
+                min=$(cat $input2 | awk '{print $2}')
+                userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
+            fi
+ 
         done
 
-        userInfo[$user]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user" "$sessions" "$total" "$max" "$min")
     done
+
+    
+   
     printIt
 }
 
