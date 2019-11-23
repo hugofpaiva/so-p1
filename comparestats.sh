@@ -6,8 +6,6 @@ users2=() #Array para os user do input2
 file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
-declare -A userInfo1=()
-declare -A userInfo2=()
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
 
 # Criação dos inputs ####FALTA VERIFICAÇÃO E AINDA NÃO PERMITE OPÇÕES - estava a morrer de sono
@@ -62,30 +60,25 @@ function getUsers() {
 
 function getUserInfo() { #Amanhã acabo
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
-
     for user1 in ${users1[@]}; do
-        sessions1=$(cat $input1 | awk '{print $1}')
-        total1=$(cat $input1 | awk '{print $2}')
-        max1=$(cat $input1 | awk '{print $2}')
-        min1=$(cat $input1 | awk '{print $2}')
+        sessions1=$(cat $input1 | grep $user1 | awk '{print $2}')
+        total1=$(cat $input1 | grep $user1 | awk '{print $3}')
+        max1=$(cat $input1 | grep $user1 | awk '{print $4}')
+        min1=$(cat $input1 | grep $user1 | awk '{print $5}')
 
-        for user2 in ${users2[@]}; do
+         for user2 in ${users2[@]}; do
             if [ "$user2" = "$user1" ];then
-                sessions=sessions1-$(cat $input2 | awk '{print $1}')
-                total=total1-$(cat $input2 | awk '{print $2}')
-                max=max1-$(cat $input2 | awk '{print $2}')
-                min=min1-$(cat $input2 | awk '{print $2}')
+                sessions=$(($sessions1-$(cat $input2 | grep $user2 | awk '{print $2}')))
+                total=$(($total1-$(cat $input2 | grep $user2 | awk '{print $3}')))
+                max=$(($max1-$(cat $input2 | grep $user2 | awk '{print $4}')))
+                min=$(($min1-$(cat $input2 | grep $user2 | awk '{print $5}')))
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
-            else
- echo "ok"
             fi
  
         done
 
     done
 
-    
-   
     printIt
 }
 
