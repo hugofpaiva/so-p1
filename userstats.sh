@@ -22,90 +22,89 @@ function usage() {
 }
 
 # Tratamento de opções
-function args(){
+function args() {
 
-      while getopts g:u:s:e:f:rntai option; do
-         case "${option}" in
-            g)
-               if [ ${2:0:1} == "-" ]; then 
-                  usage
-               else
-                  echo "Selecting users that belong to the ${OPTARG} group"
-               fi
-               ;;
-            u)
-               if [ ${2:0:1} == "-" ]; then 
-                  usage
-               else
-                  echo "Selecting users that match ${OPTARG}"
-               fi
-               ;;
-            s)
-               if [ ${2:0:1} == "-" ]; then 
-                  usage
-               else
-                  echo "Opção s"
-               fi
-               ;;
-            e)   
-               if [ ${2:0:1} == "-" ]; then 
-                  usage
-               else
-                  echo "Opção e"
-               fi
-               ;;
-            f)
-               if [ ${2:0:1} == "-" ]; then 
-                  usage
-               else
-                  echo "O script vai ler do ficheiro ${OPTARG}"
-               fi
-               ;;
-            r|n|t|a|i) ;;
-            *)
-               usage
-               ;;
-            esac
-
-            for i in "${options_control[@]}"#Vou percorrer o array das opções que não podem ser repetidas
-                  do
-                  if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
-                     usage
-                  fi
-                  done
-         if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
-            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
+   while getopts g:u:s:e:f:rntai option; do
+      case "${option}" in
+      g)
+         if [ ${2:0:1} == "-" ]; then
+            usage
          else
-            argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
-            fi
-         
+            echo "Selecting users that belong to the ${OPTARG} group"
+         fi
+         ;;
+      u)
+         if [ ${2:0:1} == "-" ]; then
+            usage
+         else
+            echo "Selecting users that match ${OPTARG}"
+         fi
+         ;;
+      s)
+         if [ ${2:0:1} == "-" ]; then
+            usage
+         else
+            echo "Opção s"
+         fi
+         ;;
+      e)
+         if [ ${2:0:1} == "-" ]; then
+            usage
+         else
+            echo "Opção e"
+         fi
+         ;;
+      f)
+         if [ ${2:0:1} == "-" ]; then
+            usage
+         else
+            echo "O script vai ler do ficheiro ${OPTARG}"
+         fi
+         ;;
+      r | n | t | a | i) ;;
+      *)
+         usage
+         ;;
+      esac
 
+      for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
+         if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
+            usage
+         fi
       done
-      shift $((OPTIND - 1))
-   
+      if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
+         argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
+      else
+         argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
+      fi
+
+   done
+
+   shift $((OPTIND - 1))
+
 }
 
 # Tratamento e leitura de dados
 
-function getUsers(){
+function getUsers() {
    if [[ -v argOpt[f] ]]; then #-v em declarative arrays vai verificar se o elemento a seguir está no array
-      users=$(last -f "${argOpt['f']}" | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed "/${argOpt['f']}/d" )   
+      users=$(last -f "${argOpt['f']}" | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed "/${argOpt['f']}/d")
    else
-         # Filtrar users
+      # Filtrar users
       if [[ -v argOpt[u] ]]; then
          match="${argOpt['u']}"
          users=$(last | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d' | grep $match)
-      
+
       elif [[ -v argOpt[g] ]]; then
          group="${argOpt['g']}"
          users=$(last | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
-         
+
          index=0
          for u in ${users[@]}; do
-            userGroups=($( id -G -n $u ))
-            if ! [[ ${userGroups[@]} =~ $group ]]; then 
+            userGroups=($(id -G -n $u))
+            if ! [[ ${userGroups[@]} =~ $group ]]; then
                unset users[$index]
-               index=$((index+1))
+               index=$((index + 1))
             fi
          done
 
@@ -124,15 +123,13 @@ function getUsers(){
       fi
    fi
 
-
-
 }
 
-function calculateTime(){
+function calculateTime() {
    time=$1
 
    # Calcular tempo em minutos
-   if (( ${#time} >= 7)); then
+   if ((${#time} >= 7)); then
       minlogged=$(echo $time | tr '+' ':' | awk -F: '{ print ($1 * 1440) + ($2 * 60) + $3 }')
    else
       minlogged=$(echo $time | awk -F: '{ print ($1 * 60) + $2 }')
@@ -141,22 +138,22 @@ function calculateTime(){
    total=$(($total + $minlogged))
 
    # Calcular máximo e mínimo
-   if (( minlogged < min )); then
+   if ((minlogged < min)); then
       min=$minlogged
    fi
 
-   if (( minlogged > max )); then
+   if ((minlogged > max)); then
       max=$minlogged
    fi
 }
 
-function getUserInfo(){ 
+function getUserInfo() {
    echo "I may take a while to process, but I'll get there. Please have a little faith!"
 
    for user in ${users[@]}; do
       if [[ -v argOpt[f] ]]; then
          sessions=$(last -f "${argOpt['f']}" | grep -o $user | wc -l)
-         time=$(last -f "${argOpt['f']}" | grep $user | awk '{print $10}' | sed '/in/d' | sed 's/[)(]//g') 
+         time=$(last -f "${argOpt['f']}" | grep $user | awk '{print $10}' | sed '/in/d' | sed 's/[)(]//g')
       else
          sessions=$(last | grep -o $user | wc -l)
          time=$(last | grep $user | awk '{print $10}' | sed '/in/d' | sed 's/[)(]//g')
@@ -164,7 +161,7 @@ function getUserInfo(){
 
       min=3000000
       max=0
-      total=0   
+      total=0
 
       for t in $time; do
          calculateTime "$t"
@@ -175,8 +172,8 @@ function getUserInfo(){
    printIt
 }
 
-function printIt(){
-   if [[ -v argOpt[r] ]]; then 
+function printIt() {
+   if [[ -v argOpt[r] ]]; then
       # ordem decrescente(nome user)
       order="-r"
    else
@@ -186,20 +183,20 @@ function printIt(){
    if [[ -v argOpt[n] ]]; then
       # ordenar por numero de sessoes
       printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
-   
+
    elif [[ -v argOpt[t] ]]; then
       # por tempo total
       printf "%s\n" "${userInfo[@]}" | sort -k2,2n ${order}
-   
+
    elif [[ -v argOpt[a] ]]; then
       # por tempo máximo
       printf "%s\n" "${userInfo[@]}" | sort -k3,3n ${order}
-   
+
    elif [[ -v argOpt[i] ]]; then
       # por tempo mínimo
       printf "%s\n" "${userInfo[@]}" | sort -k5,5n ${order}
-   
-   else 
+
+   else
       #ordem crescente (nome user)
       printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
    fi
