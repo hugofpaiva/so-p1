@@ -71,7 +71,7 @@ function getUserInfo() {
         total1=$(cat $input1 | grep $user1 | awk '{print $3}')
         max1=$(cat $input1 | grep $user1 | awk '{print $4}')
         min1=$(cat $input1 | grep $user1 | awk '{print $5}')
-        if [ $(containsElement "$user1" "${users2[@]}") ]; then 
+        if [ $(containsElement "$user1" "${users2[@]}") ]; then ######FALTA COMPOR ESTE IF
             # whatever you want to do when arr doesn't contain value
             echo "$user1"
             userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
@@ -88,7 +88,7 @@ function getUserInfo() {
                 max=$(($max1-$max2))
                 min=$(($min1-$min2))
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
-            elif [[ ! " ${users1[@]} " =~ " ${user2} " ]]; then ######FALTA COMPOR ESTE IF, a mesma coisa que lá em cima
+            elif [[ ! " ${users1[@]} " =~ " ${user2} " ]]; then ######FALTA COMPOR ESTE IF, a mesma coisa que lá em cima mas com outro método
                 # whatever you want to do when arr doesn't contain value
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions2" "$total2" "$max2" "$min2")
             fi
