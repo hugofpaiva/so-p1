@@ -86,7 +86,8 @@ function getUserInfo() {
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
 
     for user in ${users[@]}; do
-        sessions=$(cat $input1 | grep -o $user | wc -l)
+        echo "$user"
+        sessions=$(cat $input1 |awk '{print $1}')
         time=$(cat $input1 | grep $user | awk '{print $10}' | sed '/in/d' | sed 's/[)(]//g')
 
         min=3000000
