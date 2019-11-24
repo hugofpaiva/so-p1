@@ -8,7 +8,7 @@ declare -A argOpt=()      #Array associativo onde são guardadas os argumento co
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
 input=()                  #Array com os inputs
-first=0 #"Boolean" para não correr o if das opções na primeira vez que corre o while
+first=0                   #"Boolean" para não correr o if das opções na primeira vez que corre o while
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -29,7 +29,7 @@ function args() {
             if [ $# -eq 3 ]; then #Se tiver dois argumentos/ficheiros
                 input1=$2
                 input2=$3
-                argOpt[$option]="none" 
+                argOpt[$option]="none"
             else
                 usage
             fi
@@ -47,23 +47,23 @@ function args() {
         done
         first=1
 
-        if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
-            if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
-                input1=$1
-                input2=$2
-            else
-                usage
-            fi
-        else
-            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
-        fi
-
-        if [ -z "$1" ]; then #Se não for passado nada
-            usage
-        fi
-
     done
 
+    if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
+        if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
+            input1=$1
+            input2=$2
+        else
+            usage
+        fi
+    else
+        argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+    fi
+
+    if [ -z "$1" ]; then #Se não for passado nada
+        usage
+    fi
+    
     shift $((OPTIND - 1))
 
 }
