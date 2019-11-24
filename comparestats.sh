@@ -7,10 +7,11 @@ file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
+input_count=0
 
-# Criação dos inputs ####FALTA VERIFICAÇÃO E AINDA NÃO PERMITE OPÇÕES - estava a morrer de sono
-input1=$1
-input2=$2
+# Verificar que não há mais que dois ficheiros
+
+
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -42,6 +43,14 @@ function args() {
 
         if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
             argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
+        else
+            argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
+            if [ $input_count=0 ]; then
+                input1=${OPTARG[1]}
+            else
+                input2=${OPTARG[2]}
+
+            fi
         fi
 
     done
@@ -57,14 +66,14 @@ function getUsers() {
     users2=$(cat $input2 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
 }
 
-function containsElement () {
-  local e match="$1"
-  shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
-  return 1
+function containsElement() {
+    local e match="$1"
+    shift
+    for e; do [[ "$e" == "$match" ]] && return 0; done
+    return 1
 }
 
-function getUserInfo() { 
+function getUserInfo() {
     echo "I may take a while to process, but I'll get there. Please have a little faith!"
     for user1 in ${users1[@]}; do
         sessions1=$(cat $input1 | grep $user1 | awk '{print $2}')
@@ -83,10 +92,10 @@ function getUserInfo() {
             max2=$(cat $input2 | grep $user2 | awk '{print $4}')
             min2=$(cat $input2 | grep $user2 | awk '{print $5}')
             if [ "$user2" = "$user1" ]; then
-                sessions=$(($sessions1-$sessions2))
-                total=$(($total1-$total2))
-                max=$(($max1-$max2))
-                min=$(($min1-$min2))
+                sessions=$(($sessions1 - $sessions2))
+                total=$(($total1 - $total2))
+                max=$(($max1 - $max2))
+                min=$(($min1 - $min2))
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
             elif [[ ! " ${users1[@]} " =~ " ${user2} " ]]; then ######FALTA COMPOR ESTE IF, a mesma coisa que lá em cima mas com outro método
                 # whatever you want to do when arr doesn't contain value
