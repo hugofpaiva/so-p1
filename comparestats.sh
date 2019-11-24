@@ -8,11 +8,7 @@ declare -A argOpt=()      #Array associativo onde são guardadas os argumento co
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
 input=()                  #Array com os inputs
-
-# Verificar que não há mais que dois ficheiros
-input=$(echo "$@")
-input1=$1
-input2=$2
+first=0 #"Boolean" para não correr o if das opções na primeira vez que corre o while
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -29,7 +25,15 @@ function args() {
 
     while getopts g:u:s:e:f:rntai option; do
         case "${option}" in
-        r | n | t | a | i) ;;
+        r | n | t | a | i)
+            if [ $# -eq 3 ]; then #Se tiver dois argumentos/ficheiros
+                input1=$2
+                input2=$3
+                argOpt[$option]="none" 
+            else
+                usage
+            fi
+            ;;
         *)
             usage
             ;;
@@ -37,20 +41,30 @@ function args() {
 
         #Controlo das opções que não podem ser repetidas
         for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
-            if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
+            if [[ $first -ne 0 && -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
                 usage
             fi
         done
+        first=1
 
-        argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+        if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
+            if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
+                input1=$1
+                input2=$2
+            else
+                usage
+            fi
+        else
+            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+        fi
+
+        if [ -z "$1" ]; then #Se não for passado nada
+            usage
+        fi
 
     done
 
     shift $((OPTIND - 1))
-
-    if [ -z "$1" ]; then #Se não for passado nada
-        usage
-    fi
 
 }
 
