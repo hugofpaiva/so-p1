@@ -7,10 +7,13 @@ file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
-input_count=0
+input=() #Array com os inputs
 
 # Verificar que não há mais que dois ficheiros
-
+#input=$(echo "$@" | awk '$1 ~ /^⁻/ ')
+#echo "${input[@]}"
+input1=$1
+input2=$2
 
 
 # Usage das opções - Como se usa o script
@@ -41,21 +44,16 @@ function args() {
             fi
         done
 
-        if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
-            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
-        else
-            argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
-            if [ $input_count=0 ]; then
-                input1=${OPTARG[1]}
-            else
-                input2=${OPTARG[2]}
-
-            fi
-        fi
+            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+        
 
     done
 
     shift $((OPTIND - 1))
+    
+    if [ -z "$1" ]; then #Se não for passado nada
+usage
+fi
 
 }
 
@@ -64,13 +62,8 @@ function args() {
 function getUsers() {
     users1=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
     users2=$(cat $input2 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
-}
-
-function containsElement() {
-    local e match="$1"
-    shift
-    for e; do [[ "$e" == "$match" ]] && return 0; done
-    return 1
+    users=(${users2[@]} ${users1[@]})
+    unique_users=($(echo "${users[@]}" | tr ' ' '\n' | sort | uniq -u | tr '\n' ' '))
 }
 
 function getUserInfo() {
@@ -80,12 +73,6 @@ function getUserInfo() {
         total1=$(cat $input1 | grep $user1 | awk '{print $3}')
         max1=$(cat $input1 | grep $user1 | awk '{print $4}')
         min1=$(cat $input1 | grep $user1 | awk '{print $5}')
-        if [ $(containsElement "$user1" "${users2[@]}") ]; then ######FALTA COMPOR ESTE IF
-            # whatever you want to do when arr doesn't contain value
-            echo "$user1"
-            userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
-        fi
-
         for user2 in ${users2[@]}; do
             sessions2=$(cat $input2 | grep $user2 | awk '{print $2}')
             total2=$(cat $input2 | grep $user2 | awk '{print $3}')
@@ -97,9 +84,14 @@ function getUserInfo() {
                 max=$(($max1 - $max2))
                 min=$(($min1 - $min2))
                 userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions" "$total" "$max" "$min")
-            elif [[ ! " ${users1[@]} " =~ " ${user2} " ]]; then ######FALTA COMPOR ESTE IF, a mesma coisa que lá em cima mas com outro método
-                # whatever you want to do when arr doesn't contain value
-                userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions2" "$total2" "$max2" "$min2")
+            else
+                for unique in ${unique_users[@]}; do
+                    if [ "$unique" = "$user1" ]; then
+                        userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
+                    elif [ "$unique" = "$user2" ]; then
+                    userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions2" "$total2" "$max2" "$min2")
+                    fi
+                done
             fi
         done
 
