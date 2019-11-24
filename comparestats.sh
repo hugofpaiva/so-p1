@@ -7,13 +7,12 @@ file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
-input=() #Array com os inputs
+input=()                  #Array com os inputs
 
 # Verificar que não há mais que dois ficheiros
 input=$(echo "$@")
 input1=$1
 input2=$2
-
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -43,16 +42,15 @@ function args() {
             fi
         done
 
-            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
-        
+        argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
 
     done
 
     shift $((OPTIND - 1))
-    
+
     if [ -z "$1" ]; then #Se não for passado nada
-usage
-fi
+        usage
+    fi
 
 }
 
@@ -88,7 +86,7 @@ function getUserInfo() {
                     if [ "$unique" = "$user1" ]; then
                         userInfo[$user1]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user1" "$sessions1" "$total1" "$max1" "$min1")
                     elif [ "$unique" = "$user2" ]; then
-                    userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions2" "$total2" "$max2" "$min2")
+                        userInfo[$user2]=$(printf "%-8s %-5s %-6s %-5s %-5s\n" "$user2" "$sessions2" "$total2" "$max2" "$min2")
                     fi
                 done
             fi
