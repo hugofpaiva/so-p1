@@ -10,8 +10,7 @@ options_control=(n t a i) #Array com as opções que não podem ser repetidas
 input=() #Array com os inputs
 
 # Verificar que não há mais que dois ficheiros
-#input=$(echo "$@" | awk '$1 ~ /^⁻/ ')
-#echo "${input[@]}"
+input=$(echo "$@")
 input1=$1
 input2=$2
 
