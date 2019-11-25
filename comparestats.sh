@@ -6,9 +6,12 @@ users2=() #Array para os user do input2
 file_array=()
 declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
+declare -A orderOpt=()    #Array associativo onde são guardados valores para confirmar se uma opção já foi utilizada
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
-input=()                  #Array com os inputs
 first=0                   #"Boolean" para não correr o if das opções na primeira vez que corre o while
+for i in "${options_control[@]}"; do
+    orderOpt['$i']=0
+done
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -30,11 +33,16 @@ function args() {
                 input1=$2
                 input2=$3
                 argOpt[$option]="none"
+            elif [ $# -eq 4 ]; then
+                input1=$3
+                input2=$4
+                argOpt[$option]="none"
             else
                 usage
             fi
             ;;
         *)
+
             usage
             ;;
         esac
@@ -42,7 +50,11 @@ function args() {
         #Controlo das opções que não podem ser repetidas
         for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
             if [[ $first -ne 0 && -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
-                usage
+                if [ ${orderOpt['$i']} -eq 0 ]; then
+                    orderOpt['$i']=1
+                else
+                    usage
+                fi
             fi
         done
         first=1
@@ -63,7 +75,7 @@ function args() {
     if [ -z "$1" ]; then #Se não for passado nada
         usage
     fi
-    
+
     shift $((OPTIND - 1))
 
 }
@@ -125,6 +137,7 @@ function printIt() {
 
     elif [[ -v argOpt[t] ]]; then
         # por tempo total
+        echo "okok"
         printf "%s\n" "${userInfo[@]}" | sort -k2,2n ${order}
 
     elif [[ -v argOpt[a] ]]; then

@@ -5,7 +5,11 @@ users=()
 file_array=()
 declare -A argOpt=() #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()
+declare -A orderOpt=() 
 options_control=(n t a i) #Array com as opções que não podem ser repetidas
+for i in "${options_control[@]}"; do
+    orderOpt['$i']=0
+done
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -70,10 +74,14 @@ function args() {
       #Controlo das opções que não podem ser repetidas
       for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
          if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
-            usage
+            if [ ${orderOpt['$i']} -eq 0 ]; then
+               orderOpt['$i']=1
+            else
+               usage
+            fi
          fi
       done
-      
+
       if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
          argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
       else
