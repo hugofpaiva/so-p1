@@ -98,7 +98,7 @@ function args() {
 
 function getUsers() {
    if [[ -v argOpt[f] ]]; then #-v em declarative arrays vai verificar se o elemento a seguir está no array
-      users=$(last -f "${argOpt['f']}" | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed "/${argOpt['f']}/d")
+      users=$(last -f "${argOpt['f']}" | awk '{if($10 !~ /in/) {print $1}}' | sort | uniq | sed '/reboot/d' | sed "/${argOpt['f']}/d")
    else
       # Filtrar users
       if [[ -v argOpt[u] ]]; then
@@ -107,7 +107,7 @@ function getUsers() {
 
       elif [[ -v argOpt[g] ]]; then
          group="${argOpt['g']}"
-         users=$(last | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+         users=$(last | awk '{if($10 !~ /in/) {print $1}}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
 
          index=0
          for u in ${users[@]}; do
@@ -127,9 +127,9 @@ function getUsers() {
          end+="$(echo "${argOpt['e']}" | awk '{print $3}')"
          end=" -t \"$end\" "
 
-         users=$(eval last $start $end | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+         users=$(eval last $start $end | awk '{if($10 !~ /in/) {print $1}}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
       else
-         users=$(last | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+         users=$(last | awk '{if($10 !~ /in/) {print $1}}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
       fi
    fi
 
