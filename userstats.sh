@@ -103,7 +103,7 @@ function getUsers() {
       # Filtrar users
       if [[ -v argOpt[u] ]]; then
          match="${argOpt['u']}"
-         users=$(last | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d' | grep $match)
+         users=$(last | awk '{if($10 !~ /in/) {print $1}}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d' | grep $match)
 
       elif [[ -v argOpt[g] ]]; then
          group="${argOpt['g']}"
