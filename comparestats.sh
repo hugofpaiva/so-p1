@@ -5,6 +5,7 @@ users1=()              #Array para os user do input1
 users2=()              #Array para os user do input2
 declare -A argOpt=()   #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=() #Array associativo onde são guardados os dados para serem imprimidos de cada user
+args=("$@")
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -22,17 +23,6 @@ function args() {
     while getopts rntai option; do
         case "${option}" in
         r | n | t | a | i)
-            if [ $# -eq 3 ]; then #Se tiver dois argumentos/ficheiros
-                input1=$2
-                input2=$3
-                argOpt[$option]="none"
-            elif [ $# -eq 4 ]; then
-                input1=$3
-                input2=$4
-                argOpt[$option]="none"
-            else
-                usage
-            fi
             ;;
         *)
 
@@ -42,8 +32,9 @@ function args() {
 
     done
 
-    if ($OPTIND <$#); then
-        echo "$OPTIND"
+    if [ $OPTIND -lt $# ]; then
+	eval input1=\$$((OPTIND))
+	eval input2=\$$((OPTIND+1))	
     fi
 
     if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
