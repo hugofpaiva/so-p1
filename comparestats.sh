@@ -7,7 +7,7 @@ declare -A argOpt=()   #Array associativo onde são guardadas os argumento corre
 declare -A userInfo=() #Array Associativo onde é guardada a informação após o tratamento de dados correspondente a cada utilizador
 args=("$@")     
 
-# Usage das opções - Como se usa o script
+# Usage das opções 
 function usage() {
     echo "Usage: $0  -r -n -t -a -i [ficheiro1] [ficheiro2]"
     echo ""
