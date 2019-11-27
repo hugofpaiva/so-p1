@@ -22,35 +22,35 @@ function args() {
 
     while getopts rntai option; do
         case "${option}" in
-        r | n | t | a | i)
-            ;;
+        r | n | t | a | i) ;;
+
         *)
 
             usage
             ;;
         esac
 
-    done
+        if [ $OPTIND -lt $# ]; then
+            eval input1=\$$((OPTIND))
+            eval input2=\$$((OPTIND + 1))
+        fi
 
-    if [ $OPTIND -lt $# ]; then
-	eval input1=\$$((OPTIND))
-	eval input2=\$$((OPTIND+1))	
-    fi
-
-    if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
-        if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
-            input1=$1
-            input2=$2
+        if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
+            if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
+                input1=$1
+                input2=$2
+            else
+                usage
+            fi
         else
+            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+        fi
+
+        if [ -z "$1" ]; then #Se não for passado nada
             usage
         fi
-    else
-        argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
-    fi
 
-    if [ -z "$1" ]; then #Se não for passado nada
-        usage
-    fi
+    done
 
     shift $((OPTIND - 1))
 
