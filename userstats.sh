@@ -24,41 +24,41 @@ function args() {
 
    while getopts g:u:s:e:f:rntai option; do
       case "${option}" in
-      g)
+      g) #Seleção de utilizadores através do seu grupo
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
          fi
          ;;
-      u)
+      u) #Seleção de utilizadores através do nome dos utilizadores
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
          fi
          ;;
-      s)
+      s) #Seleção do período através da especificação da data a partir da qual as sessões são consideradas
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
          fi
          ;;
-      e)
+      e) #Seleção do período através da especificação da data a partir da qual as sessões não são consideradas
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
          fi
          ;;
-      f)
+      f) #Extração das informações a partir de um ficheiro distinto
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
          fi
          ;;
       r | n | t | a | i) ;;
-      *)
+      *) #Opções não atribuidas pelo getopts
          usage
          ;;
       esac
 
-      if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
-         argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value none pois não foram passados argumentos
+      if [[ -z "$OPTARG" ]]; then
+         argOpt[$option]="none"
       else
-         argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
+         argOpt[$option]=${OPTARG}
       fi
    done
 
