@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Arrays para guardar users e a sua informaçao
+# Arrays para guardar users e a sua informação
 users=() #Array onde são guardados os utilizadores únicos 
 declare -A argOpt=() #Array Associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=() #Array Associativo onde é guardada a informação após o tratamento de dados correspondente a cada utilizador
 
-# Usage das opções - Como se usa o script
+# Usage do script
 function usage() {
    echo "Usage: $0 -g [grupo] -u [nome] -s [data1] -p [data2] -r -n -t -a -i"
    echo ""
