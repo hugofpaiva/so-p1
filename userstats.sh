@@ -5,7 +5,6 @@ users=()
 declare -A argOpt=() #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()
 declare -A orderOpt=() 
-options_control=(n t a i) #Array com as opções que não podem ser repetidas
 
 
 # Usage das opções - Como se usa o script
@@ -63,14 +62,6 @@ function args() {
       else
          argOpt[$option]=${OPTARG} #Guarda no array associativo com a key correspondente à opção, o value do argumento
       fi
-
-      #Controlo das opções que não podem ser repetidas
-      for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
-	if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
-		usage
-	fi
-      done
-
    done
 
    shift $((OPTIND - 1))
@@ -168,30 +159,30 @@ function getUserInfo() {
 function printIt() {
    if [[ -v argOpt[r] ]]; then
       # ordem decrescente(nome user)
-      order="-r"
+      order="-rn"
    else
-      order=""
+      order="-n"
    fi
 
    if [[ -v argOpt[n] ]]; then
       # ordenar por numero de sessoes
-      printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
+      printf "%s\n" "${userInfo[@]}" | sort -k2,2 ${order}
 
    elif [[ -v argOpt[t] ]]; then
       # por tempo total
-      printf "%s\n" "${userInfo[@]}" | sort -k2,2n ${order}
+      printf "%s\n" "${userInfo[@]}" | sort -k3,3 ${order}
 
    elif [[ -v argOpt[a] ]]; then
       # por tempo máximo
-      printf "%s\n" "${userInfo[@]}" | sort -k3,3n ${order}
+      printf "%s\n" "${userInfo[@]}" | sort -k4,4 ${order}
 
    elif [[ -v argOpt[i] ]]; then
       # por tempo mínimo
-      printf "%s\n" "${userInfo[@]}" | sort -k5,5n ${order}
+      printf "%s\n" "${userInfo[@]}" | sort -k5,5 ${order}
 
    else
       #ordem crescente (nome user)
-      printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
+      printf "%s\n" "${userInfo[@]}" | sort -k1,1 ${order}
    fi
 }
 
