@@ -4,8 +4,6 @@
 users=()
 declare -A argOpt=() #Array associativo onde são guardadas os argumento correspondentes às opções passadas
 declare -A userInfo=()
-declare -A orderOpt=() 
-
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -49,7 +47,7 @@ function args() {
       f)
          if [ ${OPTARG:0:1} == "-" ]; then
             usage
-    	 fi
+         fi
          ;;
       r | n | t | a | i) ;;
       *)

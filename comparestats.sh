@@ -1,17 +1,10 @@
 #!/bin/bash
 
 # Arrays para guardar users e a sua informaçao
-users1=() #Array para os user do input1
-users2=() #Array para os user do input2
-file_array=()
-declare -A argOpt=()      #Array associativo onde são guardadas os argumento correspondentes às opções passadas
-declare -A userInfo=()    #Array associativo onde são guardados os dados para serem imprimidos de cada user
-declare -A orderOpt=()    #Array associativo onde são guardados valores para confirmar se uma opção já foi utilizada
-options_control=(n t a i) #Array com as opções que não podem ser repetidas
-first=0                   #"Boolean" para não correr o if das opções na primeira vez que corre o while
-for i in "${options_control[@]}"; do
-    orderOpt['$i']=0
-done
+users1=()              #Array para os user do input1
+users2=()              #Array para os user do input2
+declare -A argOpt=()   #Array associativo onde são guardadas os argumento correspondentes às opções passadas
+declare -A userInfo=() #Array associativo onde são guardados os dados para serem imprimidos de cada user
 
 # Usage das opções - Como se usa o script
 function usage() {
@@ -26,7 +19,7 @@ function usage() {
 # Tratamento de opções
 function args() {
 
-    while getopts g:u:s:e:f:rntai option; do
+    while getopts rntai option; do
         case "${option}" in
         r | n | t | a | i)
             if [ $# -eq 3 ]; then #Se tiver dois argumentos/ficheiros
@@ -47,19 +40,11 @@ function args() {
             ;;
         esac
 
-        #Controlo das opções que não podem ser repetidas
-        for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
-            if [[ $first -ne 0 && -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
-                if [ ${orderOpt['$i']} -eq 0 ]; then
-                    orderOpt['$i']=1
-                else
-                    usage
-                fi
-            fi
-        done
-        first=1
-
     done
+
+    if ($OPTIND <$#); then
+        echo "$OPTIND"
+    fi
 
     if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
         if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
@@ -126,31 +111,30 @@ function getUserInfo() {
 function printIt() {
     if [[ -v argOpt[r] ]]; then
         # ordem decrescente(nome user)
-        order="-r"
+        order="-rn"
     else
-        order=""
+        order="-n"
     fi
 
     if [[ -v argOpt[n] ]]; then
         # ordenar por numero de sessoes
-        printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
+        printf "%s\n" "${userInfo[@]}" | sort -k2,2 ${order}
 
     elif [[ -v argOpt[t] ]]; then
         # por tempo total
-        echo "okok"
-        printf "%s\n" "${userInfo[@]}" | sort -k2,2n ${order}
+        printf "%s\n" "${userInfo[@]}" | sort -k3,3 ${order}
 
     elif [[ -v argOpt[a] ]]; then
         # por tempo máximo
-        printf "%s\n" "${userInfo[@]}" | sort -k3,3n ${order}
+        printf "%s\n" "${userInfo[@]}" | sort -k4,4 ${order}
 
     elif [[ -v argOpt[i] ]]; then
         # por tempo mínimo
-        printf "%s\n" "${userInfo[@]}" | sort -k5,5n ${order}
+        printf "%s\n" "${userInfo[@]}" | sort -k5,5 ${order}
 
     else
         #ordem crescente (nome user)
-        printf "%s\n" "${userInfo[@]}" | sort -k1,1n ${order}
+        printf "%s\n" "${userInfo[@]}" | sort -k1,1 ${order}
     fi
 }
 
