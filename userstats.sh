@@ -31,39 +31,29 @@ function args() {
    while getopts g:u:s:e:f:rntai option; do
       case "${option}" in
       g)
-         if [ ${2:0:1} == "-" ]; then
+         if [ ${OPTARG:0:1} == "-" ]; then
             usage
-         else
-            echo "Selecting users that belong to the ${OPTARG} group"
          fi
          ;;
       u)
-         if [ ${2:0:1} == "-" ]; then
+         if [ ${OPTARG:0:1} == "-" ]; then
             usage
-         else
-            echo "Selecting users that match ${OPTARG}"
          fi
          ;;
       s)
-         if [ ${2:0:1} == "-" ]; then
+         if [ ${OPTARG:0:1} == "-" ]; then
             usage
-         else
-            echo "Opção s"
          fi
          ;;
       e)
-         if [ ${2:0:1} == "-" ]; then
+         if [ ${OPTARG:0:1} == "-" ]; then
             usage
-         else
-            echo "Opção e"
          fi
          ;;
       f)
-         if [ ${2:0:1} == "-" ]; then
+         if [ ${OPTARG:0:1} == "-" ]; then
             usage
-         else
-            echo "O script vai ler do ficheiro ${OPTARG}"
-         fi
+    	 fi
          ;;
       r | n | t | a | i) ;;
       *)
@@ -73,13 +63,15 @@ function args() {
 
       #Controlo das opções que não podem ser repetidas
       for i in "${options_control[@]}"; do #Vou percorrer o array das opções que não podem ser repetidas
-         if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
+	echo "i: $i"
+	if [[ -v argOpt[$i] ]]; then #Verifico se já existe umas dessas opções
             if [ ${orderOpt['$i']} -eq 0 ]; then
-               orderOpt['$i']=1
+               echo "orderopt[i] : ${orderOpt['$i']}"
+		orderOpt['$i']=1
             else
-               usage
+      	       usage
             fi
-         fi
+	fi
       done
 
       if [[ -z "$OPTARG" ]]; then #Este if corre se forem passadas opções mas nenhum argumentos
