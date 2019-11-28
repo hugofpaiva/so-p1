@@ -22,6 +22,7 @@ function usage() {
 # Tratamento de opções
 function args() {
 
+   repeat=0;
    while getopts g:u:s:e:f:rntai option; do
       case "${option}" in
       g) #Seleção de utilizadores através do seu grupo
@@ -49,7 +50,14 @@ function args() {
             usage
          fi
          ;;
-      r | n | t | a | i) ;;
+      r);;
+      n | t | a | i) 
+      if [[ $repeat = 1 ]];then
+         usage
+      else
+         repeat=1
+      fi   
+      ;;
       *) #Opções não atribuidas pelo getopts
          usage
          ;;
