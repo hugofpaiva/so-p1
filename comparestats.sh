@@ -7,7 +7,8 @@ declare -A argOpt=()   #Array associativo onde são guardadas os argumento corre
 declare -A userInfo=() #Array Associativo onde é guardada a informação após o tratamento de dados correspondente a cada utilizador
 args=("$@")     
 
-# Usage das opções 
+# Usage do script
+
 function usage() {
     echo "Usage: $0  -r -n -t -a -i [ficheiro1] [ficheiro2]"
     echo ""
@@ -18,6 +19,7 @@ function usage() {
 }
 
 # Tratamento de opções
+
 function args() {
 
     while getopts rntai option; do
@@ -35,18 +37,18 @@ function args() {
             eval input2=\$$((OPTIND + 1))
         fi
 
-        if [ $OPTIND -eq 1 ]; then #Nenhuma opção passada
-            if [ $# -eq 2 ]; then #Se tiver dois argumentos/ficheiros
+        if [ $OPTIND -eq 1 ]; then 
+            if [ $# -eq 2 ]; then 
                 input1=$1
                 input2=$2
             else
                 usage
             fi
         else
-            argOpt[$option]="none" #Guarda no array associativo com a key correspondente à opção, o value do argumento
+            argOpt[$option]="none" 
         fi
 
-        if [ -z "$1" ]; then #Se não for passado nada
+        if [ -z "$1" ]; then 
             usage
         fi
 
