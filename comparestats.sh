@@ -21,10 +21,17 @@ function usage() {
 # Tratamento de opções
 
 function args() {
-
+    repeat=0
     while getopts rntai option; do
         case "${option}" in
-        r | n | t | a | i) ;;
+        r);;
+      n | t | a | i) 
+      if [[ $repeat = 1 ]];then
+         usage
+      else
+         repeat=1
+      fi   
+      ;;
 
         *)
 
@@ -50,8 +57,8 @@ function args() {
 # Tratamento e leitura de dados
 
 function getUsers() {
-    users1=$(cat $input1 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
-    users2=$(cat $input2 | awk '{print $1}' | sort | uniq | sed '/reboot/d' | sed '/wtmp/d')
+    users1=$(cat $input1 | awk '{print $1}' | sort)
+    users2=$(cat $input2 | awk '{print $1}' | sort)
     users=(${users2[@]} ${users1[@]})
     unique_users=($(echo "${users[@]}" | tr ' ' '\n' | sort | uniq -u | tr '\n' ' '))
 }
