@@ -62,6 +62,10 @@ function args() {
       fi
    done
 
+    if [ ! $(($OPTIND-1)) -eq $# ]; then
+       usage
+    fi
+
    shift $((OPTIND - 1))
 
 }
@@ -130,7 +134,6 @@ function calculateTime() {
 }
 
 function getUserInfo() {
-   echo "I may take a while to process, but I'll get there. Please have a little faith!"
 
    for user in ${users[@]}; do
       if [[ -v argOpt[f] ]]; then

@@ -32,27 +32,16 @@ function args() {
             ;;
         esac
 
-        if [ $OPTIND -lt $# ]; then
-            eval input1=\$$((OPTIND))
-            eval input2=\$$((OPTIND + 1))
-        fi
-
-        if [ $OPTIND -eq 1 ]; then 
-            if [ $# -eq 2 ]; then 
-                input1=$1
-                input2=$2
-            else
-                usage
-            fi
-        else
-            argOpt[$option]="none" 
-        fi
-
-        if [ -z "$1" ]; then 
-            usage
-        fi
+        argOpt[$option]="none" 
 
     done
+
+    if [ $(($OPTIND+1)) -eq $# ]; then
+            eval input1=\$$((OPTIND))
+            eval input2=\$$((OPTIND + 1))
+        else
+            usage
+        fi
 
     shift $((OPTIND - 1))
 
@@ -68,7 +57,6 @@ function getUsers() {
 }
 
 function getUserInfo() {
-    echo "I may take a while to process, but I'll get there. Please have a little faith!"
     for user1 in ${users1[@]}; do
         sessions1=$(cat $input1 | grep $user1 | awk '{print $2}')
         total1=$(cat $input1 | grep $user1 | awk '{print $3}')
