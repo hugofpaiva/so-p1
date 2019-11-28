@@ -59,7 +59,7 @@ function getUsers() {
     users1=$(cat $input1 | awk '{print $1}' | sort)
     users2=$(cat $input2 | awk '{print $1}' | sort)
     users=(${users2[@]} ${users1[@]})
-    unique_users=$(echo "${users[@]}" | tr ' ' '\n' | sort | uniq -u | tr '\n' ' ')
+    unique_users=$(echo "${users[@]}" | sort | uniq -u)
 }
 
 function getUserInfo() {
