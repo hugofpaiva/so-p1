@@ -33,6 +33,7 @@ function args() {
         esac
 
         if [ $OPTIND -lt $# ]; then
+            if [ $OPTIND -gt $($#+2) ]
             eval input1=\$$((OPTIND))
             eval input2=\$$((OPTIND + 1))
         fi
