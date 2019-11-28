@@ -4,8 +4,7 @@
 users1=()              #Array para os user do 1º ficheiro
 users2=()              #Array para os user do 2º ficheiro
 declare -A argOpt=()   #Array associativo onde são guardadas os argumento correspondentes às opções passadas
-declare -A userInfo=() #Array Associativo onde é guardada a informação após o tratamento de dados correspondente a cada utilizador
-args=("$@")     
+declare -A userInfo=() #Array Associativo onde é guardada a informação após o tratamento de dados correspondente a cada utilizador     
 
 # Usage do script
 
