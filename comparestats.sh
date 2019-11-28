@@ -27,15 +27,14 @@ function args() {
         r | n | t | a | i) ;;
 
         *)
+
             usage
             ;;
         esac
 
-        if [ $($OPTIND+1) -eq $# ]; then
+        if [ $OPTIND -lt $# ]; then
             eval input1=\$$((OPTIND))
             eval input2=\$$((OPTIND + 1))
-        else
-            usage
         fi
 
         if [ $OPTIND -eq 1 ]; then 
