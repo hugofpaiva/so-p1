@@ -37,5 +37,10 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
 ## Detalhes
 É possível encontrar todos os detalhes, nomeadamente os resultados, no [Relatório do Trabalho](/relatorio/SO_Report.pdf).
 
+## Autores
+
+ - **Hugo Paiva de Almeida - 93195**
+ - **Carolina Araújo - 93248**
+
 
 
