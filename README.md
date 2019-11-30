@@ -12,9 +12,10 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
 
 ## Executar
 
-**Opções:**
+**Executar o script das estatísticas dos utilizadores (userstats.sh)**
 ```
  ./userstats.sh -g [grupo] -u [nome] -s [data1] -p [data2] -r -n -t -a -i
+ 
   [grupo] - Grupo de utilizadores
   [nome] - Nome dos utilizadores
   [data1] - Data de início da sessão a partir da qual as sessões devem ser consideradas
@@ -23,6 +24,18 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
   Todas estas opções são opcionais, sendo que o script corre sem nenhuma opção.
 
 ```
+
+**Executar o script da comparação das estatísticas dos utilizadores (comparestats.sh)**
+```
+ ./comparestats.sh -r -n -t -a -i [ficheiro1] [ficheiro2]
+ 
+[ficheiro1] = Ficheiro mais recente para ser comparado
+[ficheiro2] = Ficheiro mais antigo para ser comparado
+
+```
+
+## Detalhes
+É possível encontrar todos os detalhes, nomeadamente os resultados, no [Relatório do Trabalho](/relatorio/SO_Report.pdf).
 
 
 
