@@ -41,6 +41,9 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
 
  - **Hugo Paiva de Almeida - 93195**
  - **Carolina Araújo - 93248**
+ 
+ ## Nota
+Classificação obtida de **17** valores em **20**.
 
 
 
