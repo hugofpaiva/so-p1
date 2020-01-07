@@ -43,7 +43,7 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
  - **Carolina Araújo - 93248**
  
  ## Nota
-Classificação obtida de **17** valores em **20**.
+Classificação obtida de **17** valores em 20.
 
 
 
