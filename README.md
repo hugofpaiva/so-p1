@@ -39,8 +39,8 @@ O trabalho desenvolvido teve unicamente como propósito a implementação em amb
 
 ## Autores
 
- - **Hugo Paiva de Almeida - 93195**
- - **Carolina Araújo - 93248**
+ - **[Hugo Paiva de Almeida](https://github.com/hugofpaiva) - 93195**
+ - **[Carolina Araújo](https://github.com/carolinaaraujo00) - 93248**
  
  ## Nota
 Classificação obtida de **17** valores em 20.
